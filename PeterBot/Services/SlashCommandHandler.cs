@@ -17,12 +17,14 @@ namespace PeterBot.Services
     {
         private readonly DiscordSocketClient _client;
         private readonly ConfigurationHandler _configuration;
+        private readonly Type _thisType;
 
         public SlashCommandHandler(DiscordSocketClient client, ConfigurationHandler configuration)
         {
             _client = client;
             _client.SlashCommandExecuted += HandleSlashCommandAsync;
             _configuration = configuration;
+            _thisType = GetType();
         }
 
         public void Register()
@@ -34,7 +36,7 @@ namespace PeterBot.Services
         {
             foreach (string command in _configuration.Configuration.Commands)
             {
-                ISlashCommand? SlashCommand = Assembly.GetAssembly(GetType())?.GetType(command) as ISlashCommand;
+                ISlashCommand? SlashCommand = Assembly.GetAssembly(_thisType)?.GetType(command) as ISlashCommand;
                 if (SlashCommand == null) continue;
 
                 try
