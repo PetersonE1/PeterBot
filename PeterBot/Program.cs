@@ -6,21 +6,35 @@ namespace PeterBot
 {
     public class Program
     {
+        private ConfigurationHandler _configuration;
         private DiscordSocketClient _client;
+        private SlashCommandHandler _commands;
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
+            _configuration = new ConfigurationHandler("C:\\Users\\Peter\\source\\repos\\PetersonE1\\PeterBot\\PeterBot\\AppConfiguration.json");
 
+            _client = new DiscordSocketClient();
             _client.Log += Log;
 
-            var token = "NDM3MDgwNjQ0MDgyOTkxMTI0.GHcYm1.ebdQkLhNWJUb1gapRqVDKQw8sNQqi4S7TcnODA";
+            _commands = new SlashCommandHandler(_client, _configuration);
+
+            var token = _configuration.Configuration.Token;
+
+            Console.WriteLine("1. Start with command registration\n2. Start without command registration");
+            char startupOption;
+            do
+            {
+                startupOption = Console.ReadKey().KeyChar;
+            }
+            while (startupOption != '1' && startupOption != '2');
+            if (startupOption == '1')
+                _commands.Register();
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
-            SlashCommands commands = new SlashCommands(_client);
 
             Console.ReadLine();
 
