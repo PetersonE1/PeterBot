@@ -3,6 +3,7 @@ using Discord.Net;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using PeterBot.Models;
+using PeterBot.Modules.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,14 +35,20 @@ namespace PeterBot.Services
 
         public async Task Build_Commands()
         {
+            await _client.BulkOverwriteGlobalApplicationCommandsAsync(new ApplicationCommandProperties[0]);
             foreach (string command in _configuration.Configuration.Commands)
             {
-                ISlashCommand? SlashCommand = Assembly.GetAssembly(_thisType)?.GetType(command) as ISlashCommand;
+                Type? SlashCommand = Assembly.GetAssembly(_thisType)?.GetType($"PeterBot.Modules.Commands.{command}");
                 if (SlashCommand == null) continue;
+
+                ISlashCommand? SlashCommandInstance = SlashCommand.GetConstructor(new Type[0])?.Invoke(null) as ISlashCommand;
+                if (SlashCommandInstance == null) continue;
 
                 try
                 {
-                    await _client.CreateGlobalApplicationCommandAsync(SlashCommand.Build().Build());
+                    SlashCommandProperties properties = SlashCommandInstance.Build().Build();
+                    await _client.CreateGlobalApplicationCommandAsync(properties);
+                    Console.WriteLine($"Registered command {properties.Name}");
                 }
                 catch (HttpException ex)
                 {
