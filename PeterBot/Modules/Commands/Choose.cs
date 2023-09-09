@@ -39,7 +39,8 @@ namespace PeterBot.Modules.Commands
                 result = "null";
             }
 
-            await command.RespondAsync(result);
+            string display = message + $"\r\n**Result:** {result}";
+            await command.RespondAsync(display);
         }
     }
 }
