@@ -35,7 +35,7 @@ namespace PeterBot.Modules.Commands
                 .WithButton("Secret Info", user.Id.ToString() + ":" + message).Build();
 
             IMessageChannel channel = await command.GetChannelAsync();
-            await channel.SendMessageAsync(label, components: button);
+            await channel.SendMessageAsync($"**{command.User.Username}:** " + label, components: button);
             await command.RespondAsync("Secret info message sent", ephemeral: true);
         }
 
