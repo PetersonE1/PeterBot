@@ -51,7 +51,7 @@ namespace PeterBot.Modules.Commands
                 int result = rolls.Sum();
 
                 string modifierString = diceRoll.Modifier == 0 ? string.Empty :
-                    (diceRoll.Modifier < 0 ? $" - {diceRoll.Modifier}" : $" + {diceRoll.Modifier}");
+                    (diceRoll.Modifier < 0 ? $" - {diceRoll.Modifier * -1}" : $" + {diceRoll.Modifier}");
 
                 string rollsString = string.Empty;
                 foreach (int i in rolls)
