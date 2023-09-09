@@ -14,7 +14,7 @@ namespace PeterBot
 
         public async Task MainAsync()
         {
-            _configuration = new ConfigurationHandler("C:\\Users\\Peter\\source\\repos\\PetersonE1\\PeterBot\\PeterBot\\AppConfiguration.json");
+            _configuration = new ConfigurationHandler("AppConfiguration.json");
 
             _client = new DiscordSocketClient();
             _client.Log += Log;
