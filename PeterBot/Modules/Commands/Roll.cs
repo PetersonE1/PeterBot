@@ -35,7 +35,7 @@ namespace PeterBot.Modules.Commands
             }
             if (diceRoll.Count > 100000 || diceRoll.Sides > 100000)
             {
-                await command.RespondAsync("Values too large to process");
+                await command.RespondAsync("Values too large to process (max 100000d100000)");
                 return;
             }
             
@@ -84,6 +84,11 @@ namespace PeterBot.Modules.Commands
 
             if (diceRoll.Type == DiceType.Fate)
             {
+                if (rolls.Length > 100)
+                {
+                    await command.RespondAsync("Too many fate dice (max 100)");
+                    return;
+                }
                 string rollsString = string.Empty;
 
                 foreach (int i in rolls)
