@@ -24,7 +24,10 @@ namespace PeterBot.Modules.Commands
 
         public async Task Execute(SocketSlashCommand command)
         {
-            DiceRoll diceRoll = ProcessInput((string)command.Data.Options.ElementAt(0).Value, (string?)command.Data.Options.ElementAt(1)?.Value);
+            string? args = null;
+            if (command.Data.Options.Count > 1)
+                args = (string)command.Data.Options.ElementAt(1).Value;
+            DiceRoll diceRoll = ProcessInput((string)command.Data.Options.ElementAt(0).Value, args);
             if (diceRoll.Count == 0)
             {
                 await command.RespondAsync("Unable to process command");
@@ -48,7 +51,7 @@ namespace PeterBot.Modules.Commands
                 int result = rolls.Sum();
 
                 string modifierString = diceRoll.Modifier == 0 ? string.Empty :
-                    (diceRoll.Modifier < 0 ? $"- {diceRoll.Modifier}" : $"+ {diceRoll.Modifier}");
+                    (diceRoll.Modifier < 0 ? $" - {diceRoll.Modifier}" : $" + {diceRoll.Modifier}");
 
                 string rollsString = string.Empty;
                 foreach (int i in rolls)
@@ -57,9 +60,11 @@ namespace PeterBot.Modules.Commands
                 }
 
                 string display = $"> ### {command.User.GlobalName}" + 
-                    $"> Dice rolled: {diceRoll.Count} `1-{diceRoll.Sides}` {modifierString}" +
-                    $"\r\n> **Sum**\r\n> {result} {modifierString} = {result + diceRoll.Modifier}" +
+                    $"\r\n> Dice rolled: {diceRoll.Count} `1-{diceRoll.Sides}`{modifierString}" +
+                    $"\r\n> **Sum**\r\n> {result}{modifierString} = {result + diceRoll.Modifier}" +
                     $"\r\n> **Rolls**\r\n> {rollsString}";
+                if (diceRoll.IsAdv)
+                    display += "\r\n> **Modifiers**\r\n> Advantage";
 
                 await command.RespondAsync(display);
                 return;
@@ -73,9 +78,9 @@ namespace PeterBot.Modules.Commands
                 {
                     switch (i)
                     {
-                        case 0: rollsString += "`[-]` "; break;
-                        case 1: rollsString += "`[ ]` "; break;
-                        case 2: rollsString += "`[+]` "; break;
+                        case 1: rollsString += "`[-]` "; break;
+                        case 2: rollsString += "`[ ]` "; break;
+                        case 3: rollsString += "`[+]` "; break;
                         default: break;
                     }
                 }

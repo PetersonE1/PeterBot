@@ -27,16 +27,16 @@ namespace PeterBot.Services
             _client.SlashCommandExecuted += HandleSlashCommandAsync;
             _configuration = configuration;
             _thisType = GetType();
+            Build_Commands();
         }
 
         public void Register()
         {
-            _client.Ready += Build_Commands;
+            _client.Ready += Register_Commands;
         }
 
-        public async Task Build_Commands()
+        public void Build_Commands()
         {
-            await _client.BulkOverwriteGlobalApplicationCommandsAsync(new ApplicationCommandProperties[0]);
             foreach (string command in _configuration.Configuration.Commands)
             {
                 Type? SlashCommand = Assembly.GetAssembly(_thisType)?.GetType($"PeterBot.Modules.Commands.{command}");
@@ -45,10 +45,21 @@ namespace PeterBot.Services
                 ISlashCommand? SlashCommandInstance = SlashCommand.GetConstructor(new Type[0])?.Invoke(null) as ISlashCommand;
                 if (SlashCommandInstance == null) continue;
 
+                SlashCommandProperties properties = SlashCommandInstance.Build().Build();
+                _commands.Add(command.ToLower(), SlashCommandInstance);
+                
+            }
+        }
+
+        public async Task Register_Commands()
+        {
+            await _client.BulkOverwriteGlobalApplicationCommandsAsync(new ApplicationCommandProperties[0]);
+
+            foreach (ISlashCommand command in _commands.Values)
+            {
+                SlashCommandProperties properties = command.Build().Build();
                 try
                 {
-                    SlashCommandProperties properties = SlashCommandInstance.Build().Build();
-                    _commands.Add((string)properties.Name, SlashCommandInstance);
                     await _client.CreateGlobalApplicationCommandAsync(properties);
                     Console.WriteLine($"Registered command {properties.Name}");
                 }
