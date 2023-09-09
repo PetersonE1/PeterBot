@@ -11,7 +11,7 @@ namespace PeterBot.Modules.Commands
 {
     public class Echo : ISlashCommand
     {
-        public SlashCommandBuilder Build()
+        public SlashCommandBuilder Build(DiscordSocketClient client)
         {
             var globalCommand = new SlashCommandBuilder()
                 .WithName("echo")

@@ -12,7 +12,7 @@ namespace PeterBot.Modules.Commands
 {
     public class Roll : ISlashCommand
     {
-        public SlashCommandBuilder Build()
+        public SlashCommandBuilder Build(DiscordSocketClient client)
         {
             var globalCommand = new SlashCommandBuilder()
                 .WithName("roll")

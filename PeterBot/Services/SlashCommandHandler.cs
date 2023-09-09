@@ -45,7 +45,7 @@ namespace PeterBot.Services
                 ISlashCommand? SlashCommandInstance = SlashCommand.GetConstructor(new Type[0])?.Invoke(null) as ISlashCommand;
                 if (SlashCommandInstance == null) continue;
 
-                SlashCommandProperties properties = SlashCommandInstance.Build().Build();
+                SlashCommandProperties properties = SlashCommandInstance.Build(_client).Build();
                 _commands.Add(command.ToLower(), SlashCommandInstance);
                 
             }
@@ -57,7 +57,7 @@ namespace PeterBot.Services
 
             foreach (ISlashCommand command in _commands.Values)
             {
-                SlashCommandProperties properties = command.Build().Build();
+                SlashCommandProperties properties = command.Build(_client).Build();
                 try
                 {
                     await _client.CreateGlobalApplicationCommandAsync(properties);

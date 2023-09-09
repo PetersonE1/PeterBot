@@ -10,7 +10,7 @@ namespace PeterBot.Models
 {
     public interface ISlashCommand
     {
-        SlashCommandBuilder Build();
+        SlashCommandBuilder Build(DiscordSocketClient client);
 
         Task Execute(SocketSlashCommand command);
     }
