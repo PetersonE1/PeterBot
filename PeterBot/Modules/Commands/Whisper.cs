@@ -28,10 +28,10 @@ namespace PeterBot.Modules.Commands
             IUser user = (IUser)command.Data.Options.ElementAt(1).Value;
 
             var button = new ComponentBuilder()
-                .WithButton("Secret Info", user.Id.ToString() + ":" + message);
+                .WithButton("Secret Info", user.Id.ToString() + ":" + message).Build();
 
             IMessageChannel channel = await command.GetChannelAsync();
-            await channel.SendMessageAsync("Secret Info Button", components: button.Build());
+            await channel.SendMessageAsync("Secret Info Button", components: button);
         }
 
         public async Task InfoButtonHandler(SocketMessageComponent component)
