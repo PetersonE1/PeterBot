@@ -28,7 +28,7 @@ namespace PeterBot.Modules.Commands
             if (command.Data.Options.Count > 1)
                 args = (string)command.Data.Options.ElementAt(1).Value;
             DiceRoll diceRoll = ProcessInput((string)command.Data.Options.ElementAt(0).Value, args);
-            if (diceRoll.Count == 0)
+            if (diceRoll.Count <= 0 || diceRoll.Sides <= 0)
             {
                 await command.RespondAsync("Unable to process command");
                 return;
