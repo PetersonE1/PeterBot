@@ -31,9 +31,7 @@ namespace PeterBot.Modules.Commands
                 .WithButton("Secret Info", user.Id.ToString() + ":" + message);
 
             IMessageChannel channel = await command.GetChannelAsync();
-            await channel.SendMessageAsync(message, flags: MessageFlags.Ephemeral);
-
-            await command.RespondAsync($"Sent message to {user.Username}: {message}", ephemeral: true);
+            await channel.SendMessageAsync("Secret Info Button", components: button.Build());
         }
 
         public async Task InfoButtonHandler(SocketMessageComponent component)
@@ -42,10 +40,10 @@ namespace PeterBot.Modules.Commands
 
             if (component.User.Id.ToString() == parts[0])
             {
-                await component.RespondAsync(parts[1]);
+                await component.RespondAsync(parts[1], ephemeral: true);
                 return;
             }
-            await component.RespondAsync("You aren't the recipient");
+            await component.RespondAsync("You aren't the recipient", ephemeral: true);
             return;
         }
     }
