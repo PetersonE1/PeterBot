@@ -33,6 +33,11 @@ namespace PeterBot.Modules.Commands
                 await command.RespondAsync("Unable to process command");
                 return;
             }
+            if (diceRoll.Count > 100000 || diceRoll.Sides > 100000)
+            {
+                await command.RespondAsync("Values too large to process");
+                return;
+            }
             
             int[] rolls = new int[diceRoll.Count];
             for (int i = 0;  i < diceRoll.Count; i++)
@@ -48,15 +53,22 @@ namespace PeterBot.Modules.Commands
 
             if (diceRoll.Type == DiceType.Normal)
             {
-                int result = rolls.Sum();
+                long result = 0;
+                foreach (int roll in rolls)
+                    result += roll;
 
                 string modifierString = diceRoll.Modifier == 0 ? string.Empty :
                     (diceRoll.Modifier < 0 ? $" - {diceRoll.Modifier * -1}" : $" + {diceRoll.Modifier}");
 
                 string rollsString = string.Empty;
-                foreach (int i in rolls)
+                for (int i = 0; i < rolls.Length; i++)
                 {
-                    rollsString += $"`{i}` ";
+                    rollsString += $"`{rolls[i]}` ";
+                    if (i >= 50)
+                    {
+                        rollsString += "...";
+                        break;
+                    }
                 }
 
                 string display = $"> ### {command.User.GlobalName}" + 
