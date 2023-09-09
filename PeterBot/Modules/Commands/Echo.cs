@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using PeterBot.Models;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,12 @@ namespace PeterBot.Modules.Commands
                 .WithDescription("Echoes back the given message")
                 .AddOption("message", ApplicationCommandOptionType.String, "Message to be echoed", isRequired: true);
             return globalCommand;
+        }
+
+        public async Task Execute(SocketSlashCommand command)
+        {
+            var message = command.Data.Options.First().Value as string;
+            await command.RespondAsync(message);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace PeterBot.Services
         private readonly DiscordSocketClient _client;
         private readonly ConfigurationHandler _configuration;
         private readonly Type _thisType;
+        private Dictionary<string, ISlashCommand> _commands = new Dictionary<string, ISlashCommand>();
 
         public SlashCommandHandler(DiscordSocketClient client, ConfigurationHandler configuration)
         {
@@ -47,6 +48,7 @@ namespace PeterBot.Services
                 try
                 {
                     SlashCommandProperties properties = SlashCommandInstance.Build().Build();
+                    _commands.Add((string)properties.Name, SlashCommandInstance);
                     await _client.CreateGlobalApplicationCommandAsync(properties);
                     Console.WriteLine($"Registered command {properties.Name}");
                 }
@@ -60,9 +62,8 @@ namespace PeterBot.Services
 
         private async Task HandleSlashCommandAsync(SocketSlashCommand command)
         {
-            var message = command.Data.Options.First().Value as string;
-
-            await command.RespondAsync(message);
+            if (_commands.TryGetValue(command.CommandName, out ISlashCommand? SlashCommand))
+                await SlashCommand.Execute(command);
         }
     }
 }
